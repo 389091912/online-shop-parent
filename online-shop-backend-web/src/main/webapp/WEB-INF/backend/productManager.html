@@ -1,17 +1,20 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
 
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>backend</title>
-    <link rel="stylesheet"  href="../css/bootstrap.css" />
-    <link rel="stylesheet"  href="../css/index.css" />
-    <link rel="stylesheet"  href="../css/file.css" />
-    <script src="../js/jquery.js"></script>
-    <script src="../js/bootstrap.js"></script>
-    <script src="../js/userSetting.js"></script>
+    <link rel="stylesheet"  href="../static/css/bootstrap.css" th:href="@{/css/bootstrap.css}" />
+    <link rel="stylesheet"  href="../static/css/index.css" th:href="@{/css/index.css}"/>
+    <link rel="stylesheet"  href="../static/css/file.css" th:href="@{/css/file.css}" />
+    <script src="../static/js/jquery.js" th:src="@{/js/jquery.js}"></script>
+    <script src="../static/js/bootstrap.js" th:src="@{/js/bootstrap.js}"></script>
+    <script src="../static/js/userSetting.js" th:src="@{/js/userSetting.js}" ></script>
+    <script src="../static/js/bootstrap-paginator.js" th:src="@{/js/bootstrap-paginator.js}"></script>
+    <script src="../static/js/bootstrap-mypaginator.js" th:src="@{/js/bootstrap-mypaginator.js}"></script>
+    <script src="../static/js/template-web.js" th:src="@{/js/template-web.js}"></script>
     <script>
         $(function(){
             //上传图像预览
@@ -23,6 +26,95 @@
             });   
         });
 
+    </script>
+
+    <script type="text/javascript">
+        $(() => {
+            $.ajax({
+                type:"post",
+                url:"/productType/test",
+                dataType:'json',
+                success:(data)=>{
+                    console.log(data);
+                    for(let i=0;i<data.length;i++){
+                        $("#product-type").append("<option value='" + data[i].id + "'>" + data[i].name + "</option>");
+                        $("#pro-type").append("<option value='" + data[i].id + "'>" + data[i].name + "</option>");
+                    }
+                },
+                error:()=>{
+                    alert("错误");
+                }
+
+            });
+
+
+
+            ajaxLoadData({
+                'pageNo': 1
+            });
+
+        });
+
+        myoptions.onPageClicked = function(event, originalEvent, type, page){
+            ajaxLoadData({
+                'pageNo': page,
+            });
+        };
+
+
+        function ajaxLoadData(params){
+            $.ajax({
+                "type": "post",
+                "dataType": "json",
+                "url" : "/product/findAllByAjax",
+                "data" : params,
+                "success" : function(data){
+                    let list = data.list;//当前页的数据数组
+                    console.log(list);
+                    $("#userList").html("");
+                    let d = {
+                        "userList": list  //json
+                    };
+                    let txt = template("userListTemplate", d);
+
+                    $("#userList").html(txt);
+
+                    let totalPages = data.pages;//新数据的总页数
+                    if(totalPages == 0){
+                        totalPages = 1;
+                    }
+                    $(".doProModify").on("click", function() {
+                        $(".modal-title").html("用户修改");
+                        $("#myProduct").modal("show");
+                    });
+                    $(".updateOne").on("click", function() {
+                        $("#myProduct").modal("hide");
+                    });
+/*
+                    $("#pageNo").val(params.pageNo);
+*/
+                    myPaginatorFun("myPages", params.pageNo, totalPages);
+                },
+
+                "error" : function(){
+                    alert("此条件,没有用户存在！！");
+                }
+            });
+        }
+        function showProduct(id) {
+            $.get(
+                "/product/find/"+id,
+                function (data) {
+                    console.log(data);
+                    $("#pro-num").val(data.id);
+                    $("#pro-name").val(data.name);
+                    $("#pro-price").val(data.price);
+                    $("#img2").attr("src", data.image);
+                    $("#pro-type").find("option[value='"+data.productTypeId+"']").attr("selected",true);
+                }
+            );
+
+        }
     </script>
 </head>
 
@@ -51,18 +143,7 @@
                             <th class="text-center">操作</th>
                         </tr>
                     </thead>
-                    <tbody id="tb">
-                        <tr>
-                            <td>1</td>
-                            <td>手机</td>
-                            <td>1999</td>
-                            <td>电子产品</td>
-                            <td>有效商品</td>
-                            <td class="text-center">
-                                <input type="button" class="btn btn-warning btn-sm doProModify" value="修改">
-                                <input type="button" class="btn btn-warning btn-sm doProDelete" value="删除">
-                            </td>
-                        </tr>
+                    <tbody id="userList">
                         <tr>
                             <td>1</td>
                             <td>平板</td>
@@ -75,7 +156,37 @@
                             </td>
                         </tr>
                     </tbody>
+
+                    <script id="userListTemplate" type="text/html">
+                        {{each userList as item}}
+                        <tr>
+                            <td>{{item.id}}</td>
+                            <td>{{item.name}}</td>
+                            <td>{{item.price}}</td>
+                            <td>{{item.productType.name}}</td>
+                            <td>
+                                {{if item.productType.status==0}}
+                                    有效商品
+                                {{else}}
+                                    无效商品
+                                {{/if}}
+                            </td>
+                            <td class="text-center">
+                                <input type="button" onclick="showProduct('{{item.id}}')" class="btn btn-warning btn-sm doProModify" value="修改">
+                                <input type="button" class="btn btn-warning btn-sm doProDelete" value="删除">
+                            </td >
+
+                        </tr>
+                        {{/each}}
+                    </script>
+
                 </table>
+                <!-- 分页 -->
+                <div style="text-align: center;">
+                    <ul id="myPages"></ul>
+                    <input id="currentPageInput" type="hidden" value="" />
+                </div>
+
             </div>
         </div>
     </div>
@@ -85,7 +196,7 @@
         <!-- 窗口声明 -->
         <div class="modal-dialog modal-lg">
             <!-- 内容声明 -->
-            <form action="" class="form-horizontal">
+            <form action="/product/addOrModifyProduct" th:action="@{/product/addOrModifyProduct}" method="post" class="form-horizontal" enctype="multipart/form-data">
             <div class="modal-content">
                 <!-- 头部、主体、脚注 -->
                 <div class="modal-header">
@@ -97,30 +208,30 @@
                         <div class="form-group">
                             <label for="product-name" class="col-sm-4 control-label">商品名称：</label>
                             <div class="col-sm-8">
-                                <input type="text" class="form-control" id="product-name">
+                                <input type="text" class="form-control" name="name" id="product-name">
                             </div>
                         </div>
                         <div class="form-group">
                             <label for="product-price" class="col-sm-4 control-label">商品价格：</label>
                             <div class="col-sm-8">
-                                <input type="text" class="form-control" id="product-price">
+                                <input type="text" class="form-control" name="price" id="product-price">
                             </div>
                         </div>
                         <div class="form-group">
                             <label for="product-image" class="col-sm-4 control-label">商品图片：</label>
                             <div class="col-sm-8">
                                 <a href="javascript:;" class="file">选择文件
-                                    <input type="file" name="" id="product-image">
+                                    <input type="file" name="file" id="product-image">
                                 </a>
                             </div>
                         </div>
+
                         <div class="form-group">
                             <label for="product-type" class="col-sm-4 control-label">商品类型：</label>
                             <div class="col-sm-8">
-                                <select class="form-control">
-                                    <option>请选择</option>
-                                    <option>电子产品</option>
-                                    <option>化妆品</option>
+                                <select class="form-control" id="product-type"  name="productTypeId">
+                                    <option value="-1">请选择</option>
+
                                 </select>
                             </div>
                         </div>
@@ -181,12 +292,13 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label for="product-type" class="col-sm-4 control-label">商品类型：</label>
+                            <label for="pro-type" class="col-sm-4 control-label">商品类型：</label>
                             <div class="col-sm-8">
-                                <select class="form-control">
-                                    <option>请选择</option>
-                                    <option>电子产品</option>
-                                    <option>化妆品</option>
+                                <select class="form-control" name="productTypeId" id="pro-type">
+                                   <!-- <option th:selected="${product!=null}?${type.id==product.productType.id}"
+                                            th:each="type:${productTypes}"  th:text="${type.name}" th:value="${type.id}">1</option>-->
+
+
                                 </select>
                             </div>
                         </div>
@@ -194,6 +306,7 @@
                     <div class="col-sm-4">
                         <!-- 显示图像预览 -->
                         <img style="width: 160px;height: 180px;" id="img2">
+
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -203,7 +316,8 @@
             </div>
             </form>
         </div>
-    <!-- 修改商品 end -->  
+    <!-- 修改商品 end -->
+    </div>
 </body>
 
 </html>

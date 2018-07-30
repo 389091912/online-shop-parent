@@ -15,7 +15,14 @@
        http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd http://mybatis.org/schema/mybatis-spring http://mybatis.org/schema/mybatis-spring.xsd"
 
 >
-    <mvc:annotation-driven/>
+    <mvc:annotation-driven>
+        <mvc:message-converters>
+            <bean class="org.springframework.http.converter.ByteArrayHttpMessageConverter"/>
+            <bean class="org.springframework.http.converter.StringHttpMessageConverter">
+                <constructor-arg value="utf-8"/>
+            </bean>
+        </mvc:message-converters>
+    </mvc:annotation-driven>
 
     <context:component-scan base-package="com.online.shop.controller"/>
 
@@ -23,7 +30,7 @@
         <property name="prefix" value="/WEB-INF/backend/"/>
         <property name="suffix" value=".html"/>
         <property name="templateMode" value="HTML5"/>
-        <property name="cacheable" value="true"/>
+        <property name="cacheable" value="false"/>
     </bean>
 
     <bean id="templateEngine" class="org.thymeleaf.spring4.SpringTemplateEngine">
@@ -46,5 +53,19 @@
     <mvc:resources mapping="/images/**" location="/WEB-INF/static/images/"/>
     <mvc:resources mapping="/fonts/**" location="/WEB-INF/static/fonts/"/>
     <mvc:resources mapping="/iconfont/**" location="/WEB-INF/static/iconfont/"/>
+    <mvc:resources mapping="/upload/**" location="upload/"/>
+
+    <mvc:view-controller path="/showLogin" view-name="login"/>
+    <mvc:view-controller path="/main" view-name="main"/>
+    <mvc:view-controller path="/customerManager" view-name="customerManager"/>
+    <mvc:view-controller path="/productManager" view-name="productManager"/>
+    <mvc:view-controller path="/productTypeManager" view-name="productTypeManager"/>
+    <mvc:view-controller path="/sysuserManager" view-name="sysuserManager"/>
+    <mvc:view-controller path="/success" view-name="success"/>
+
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver"/>
+
+
+
 
 </beans>

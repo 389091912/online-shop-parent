@@ -160,4 +160,15 @@ public class Item {
     public void setOrderId(Integer orderId) {
         this.orderId = orderId;
     }
+
+    @Override
+    public String toString() {
+        return "Item{" +
+                "id=" + id +
+                ", productId=" + productId +
+                ", num=" + num +
+                ", price=" + price +
+                ", orderId=" + orderId +
+                '}';
+    }
 }

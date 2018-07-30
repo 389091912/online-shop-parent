@@ -3,8 +3,8 @@ package com.online.shop.service;
 /**
  * Created by IntelliJ IDEA.
  * User: wsy
- * Date: 2018-07-21
- * Time: 2:58
+ * Date: 2018-07-22
+ * Time: 16:38
  */
-public interface SysuserService {
+public interface OrderService {
 }

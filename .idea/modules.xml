@@ -9,7 +9,6 @@
       <module fileurl="file://$PROJECT_DIR$/online-shop-pojo/online-shop-pojo.iml" filepath="$PROJECT_DIR$/online-shop-pojo/online-shop-pojo.iml" />
       <module fileurl="file://$PROJECT_DIR$/online-shop-service/online-shop-service.iml" filepath="$PROJECT_DIR$/online-shop-service/online-shop-service.iml" />
       <module fileurl="file://$PROJECT_DIR$/onlineShop.iml" filepath="$PROJECT_DIR$/onlineShop.iml" />
-      <module fileurl="file://$PROJECT_DIR$/online_shop_dao.iml" filepath="$PROJECT_DIR$/online_shop_dao.iml" />
     </modules>
   </component>
 </project>

@@ -84,6 +84,7 @@
       </foreach>
     </where>
   </sql>
+
   <sql id="Base_Column_List" >
     <!--
       WARNING - @mbggenerated
@@ -92,6 +93,45 @@
     -->
     id, name, login_name, password, phone, address, is_valid, regist_date
   </sql>
+
+  <select id="selectAllByAjax" resultMap="BaseResultMap" parameterType="com.online.shop.vo.CustomerVo">
+    SELECT <include refid="Base_Column_List"></include>
+    from t_customer
+    <trim prefix="where" prefixOverrides="and|or">
+     <!-- <if test=" id!=null and id !='' ">
+        <bind name="id" value="'%'+_parameter.id+'%'"/>
+        and id = #{id}
+      </if>-->
+
+      <if test=" name!=null and name !='' ">
+        <bind name="name" value="'%'+_parameter.name+'%'"/>
+        and name like #{name}
+      </if>
+      <if test=" loginName!=null and loginName !='' ">
+        <bind name="loginName" value="'%'+_parameter.loginName+'%'"/>
+        and login_name like #{loginName}
+      </if>
+
+      <if test=" address!=null and address !='' ">
+        <bind name="address" value="'%'+_parameter.address+'%'"/>
+        and address like #{address} ESCAPE '/'
+      </if>
+
+
+      <if test=" phone!=null and phone !='' ">
+        <bind name="phone" value="'%'+_parameter.phone+'%'"/>
+        and phone like #{phone}  ESCAPE '/'
+      </if>
+
+      <if test=" isValid!='-1'">
+        and is_valid = #{isValid}
+      </if>
+    </trim>
+    order by id DESC
+  </select>
+
+
+
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.online.shop.pojo.CustomerExample" >
     <!--
       WARNING - @mbggenerated

@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
   <head>
     <title>在线商城-后台管理系统</title>
     <meta charset="utf-8">
-    <link rel="stylesheet" href="../css/bootstrap.min.css" />
-    <link rel="stylesheet" href="../css/mycss.css" />
-    <script type="text/javascript" src="../js/jquery.min.js"></script>
-    <script type="text/javascript" src="../js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="../static/css/bootstrap.min.css" th:href="@{/css/bootstrap.min.css}" />
+    <link rel="stylesheet" href="../static/css/mycss.css" th:href="@{/css/mycss.css}" />
+    <script type="text/javascript" src="../static/js/jquery.min.js" th:src="@{/js/jquery.min.js}"></script>
+    <script type="text/javascript" src="../static/js/bootstrap.min.js" th:src="@{/js/bootstrap.min.js}"></script>
   </head>
   <body>
   	<!-- 使用自定义css样式 div-signin 完成元素居中-->
@@ -19,27 +19,27 @@
 	    </div>
 	    <div class="panel-body">
 	      <!-- login form start -->
-	      <form action="main.html" class="form-horizontal" method="post">
+	      <form action="/main" th:action="@{/sysUser/login}" class="form-horizontal" method="post">
 		     <div class="form-group">
 		       <label class="col-sm-3 control-label">用户名：</label>
 		       <div class="col-sm-9">
-		         <input class="form-control" type="text" placeholder="请输入用户名">
+		         <input class="form-control" name="loginName" type="text" placeholder="请输入用户名">
 		       </div>
 		    </div>
 		     <div class="form-group">
 		       <label class="col-sm-3 control-label">密&nbsp;&nbsp;&nbsp;&nbsp;码：</label>
 		       <div class="col-sm-9">
-		         <input class="form-control" type="password" placeholder="请输入密码">
+		         <input class="form-control" name="password" type="password" placeholder="请输入密码">
 		       </div>
 		    </div>
 		     <div class="form-group">
 		       <label class="col-sm-3 control-label">验证码：</label>
 		       <div class="col-sm-4">
-		         <input class="form-control" type="text" placeholder="验证码">
+		         <input class="form-control" name="code" type="text" placeholder="验证码">
 		       </div>
 		       <div class="col-sm-2">
 		       	  <!-- 验证码 -->
-			      <img class="img-rounded" src="../images/image.jpg" style="height: 32px; width: 70px;"/>
+			      <img class="img-rounded" src="../static/images/image.jpg" th:src="@{images/image.jpg}" style="height: 32px; width: 70px;"/>
 		       </div>
 		       <div class="col-sm-2">
 		         <button type="button" class="btn btn-link">看不清</button>

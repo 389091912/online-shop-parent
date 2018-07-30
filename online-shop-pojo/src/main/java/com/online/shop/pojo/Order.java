@@ -162,4 +162,15 @@ public class Order {
     public void setCreateDate(Date createDate) {
         this.createDate = createDate;
     }
+
+    @Override
+    public String toString() {
+        return "Order{" +
+                "id=" + id +
+                ", no='" + no + '\'' +
+                ", customerId=" + customerId +
+                ", price=" + price +
+                ", createDate=" + createDate +
+                '}';
+    }
 }

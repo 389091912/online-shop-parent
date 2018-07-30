@@ -225,7 +225,9 @@
             //show the corresponding page and retrieve the newly built item related to the page clicked before for the event return
 
             var currentTarget = $(event.currentTarget);
-
+            /* 2017-08-30 刘道林修改*/
+            currentTarget.bootstrapPaginator("show", page);
+            /* 2017-08-30 刘道林修改
             switch (type) {
             case "first":
                 currentTarget.bootstrapPaginator("showFirst");
@@ -243,6 +245,7 @@
                 currentTarget.bootstrapPaginator("show", page);
                 break;
             }
+            */
 
         },
 

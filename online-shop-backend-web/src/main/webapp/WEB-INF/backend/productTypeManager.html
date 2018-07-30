@@ -1,15 +1,85 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>backend</title>
-    <link rel="stylesheet"  href="../css/bootstrap.css" />
-    <link rel="stylesheet"  href="../css/index.css" />
-    <script src="../js/jquery.js"></script>
-    <script src="../js/bootstrap.js"></script>
-    <script src="../js/userSetting.js"></script>
+    <link rel="stylesheet"  href="../static/css/bootstrap.css" th:href="@{/css/bootstrap.css}" />
+    <link rel="stylesheet"  href="../static/css/index.css" th:href="@{/css/index.css}" />
+    <script src="../static/js/jquery.js" th:src="@{/js/jquery.js}"></script>
+    <script src="../static/js/bootstrap.js" th:src="@{/js/bootstrap.js}"></script>
+    <script src="../static/js/userSetting.js" th:src="@{/js/userSetting.js}"></script>
+    <script src="../static/js/bootstrap-paginator.js" th:src="@{/js/bootstrap-paginator.js}"></script>
+    <script src="../static/js/bootstrap-mypaginator.js" th:src="@{/js/bootstrap-mypaginator.js}"></script>
+
+
+<!--
+    <script type="text/javascript" th:inline="javascript">
+        /*<![CDATA[*/
+
+        var basePath =/*[[${#httpServletRequest.getScheme() + "://" + #httpServletRequest.getServerName() + ":" + #httpServletRequest.getServerPort() + #httpServletRequest.getContextPath()}]]*/;
+        $(function () {
+
+            $(".addProductType").click(function () {
+                $.ajax({
+                    type: 'post',
+                    dataType: 'json',
+                    url: basePath + '/productType/add',
+                    data: {
+                        "pageNo":$("#pageNo").val(),
+                        "name":$("#productTypeName").val()
+                    },
+                    success:function () {
+
+
+                    }
+                });
+            });
+
+        });
+
+
+
+        /*]]>*/
+    </script>
+-->
+
+    <script>
+        $(()=>{
+
+           myoptions.pageUrl = function (type, page, current){
+               console.log(current);
+            return "/productType/findAllByAjax/"+page;
+           };
+
+            myPaginatorFun("myPages",[[${#request.getAttribute('types').pageNum}]],[[${#request.getAttribute('types').pages}]]);
+
+            $("input[name='findType']").click(function () {
+                $.ajax({
+                    type:"get",
+                    url:"/productType/findType/"+$(this).attr("data-id"),
+                    dataType:"json",
+                    success:(result)=> {
+                        $("#proTypeNum").val(result.id);
+                        $("#proTypeName").val(result.name);
+                    }
+                });
+            });
+
+            $(".doProTypeDelete").click(function () {
+                $("#delete").attr("action", $(this).attr("data-url")).submit();
+                return false;
+            });
+            $(".doProTypeDisable").click(function () {
+                $("#update").attr("action", $(this).attr("data-url")).submit();
+                return false;
+            });
+
+        });
+
+
+    </script>
 </head>
 
 <body>
@@ -31,29 +101,34 @@
                             <th class="text-center">操作</th>
                         </tr>
                     </thead>
-                    <tbody id="tb">
+                    <!--/*@thymesVar id="types" type="com.online.shop.controller.ProductTypeController"*/-->
+                    <tbody id="tb" th:each="productType:${types}">
+
                         <tr>
-                            <td>1</td>
-                            <td>aaaa</td>
-                            <td>启用</td>
+                            <td th:text="${productType.id}">1</td>
+                            <td th:text="${productType.name}">aaaa</td>
+                            <td th:text="${productType.status}==0?'启用':'禁用'">启用</td>
                             <td class="text-center">
-                                <input type="button" class="btn btn-warning btn-sm doProTypeModify" value="修改">
-                                <input type="button" class="btn btn-warning btn-sm doProTypeDelete" value="删除">
-                                <input type="button" class="btn btn-danger btn-sm doProTypeDisable" value="禁用">
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>1</td>
-                            <td>aaaa</td>
-                            <td>启用</td>
-                            <td class="text-center">
-                                <input type="button" class="btn btn-warning btn-sm doProTypeModify" value="修改">
-                                <input type="button" class="btn btn-warning btn-sm doProTypeDelete" value="删除">
-                                <input type="button" class="btn btn-success btn-sm doProDisable" value="启用">
+                                <input type="button" th:attr="data-id=${productType.id}" class="btn btn-warning btn-sm doProTypeModify" name="findType" value="修改">
+                                <button th:attr="data-url=@{/productType/deleteType/{id}/{pageNo}(id=${productType.id},pageNo=${types.pageNum})}" class="btn btn-warning btn-sm doProTypeDelete">删除</button>
+                                <input type="button" th:attr="data-url=@{/productType/modifyStatus/{id}/{pageNo}(id=${productType.id},pageNo=${types.pageNum})}"
+                                       class="btn btn-danger btn-sm doProTypeDisable"
+                                       th:class="${productType.status}==0?'btn btn-danger btn-sm doProTypeDisable':'btn btn-success btn-sm doProTypeDisable'"
+                                       th:value="${productType.status}==0?'禁用':'启用'" value="禁用">
                             </td>
                         </tr>
                     </tbody>
                 </table>
+                <form id="delete" method="post">
+                    <input type="hidden" name="_method" value="delete">
+                </form>
+                <form id="update" method="post">
+                    <input type="hidden" name="_method" value="put">
+                </form>
+                <div style="text-align: center;">
+                    <input id="currentPageInput" type="hidden" value="20" />
+                    <ul id="myPages" ></ul>
+                </div>
             </div>
         </div>
     </div>
@@ -69,19 +144,22 @@
                     <button class="close" data-dismiss="modal">&times;</button>
                     <h4 class="modal-title">添加商品类型</h4>
                 </div>
-                <div class="modal-body text-center">
-                    <div class="row text-right">
-                        <label for="productTypeName" class="col-sm-4 control-label">类型名称：</label>
-                        <div class="col-sm-4">
-                            <input type="text" class="form-control" id="productTypeName">
+                <form action="#" th:action="@{/productType/add}" method="post">
+                    <input type="hidden" name="pageNo" id="pageNo" th:value="${types.pageNum}">
+                    <div class="modal-body text-center">
+                        <div class="row text-right">
+                            <label for="productTypeName" class="col-sm-4 control-label">类型名称：</label>
+                            <div class="col-sm-4">
+                                <input type="text" class="form-control" id="productTypeName" name="name">
+                            </div>
                         </div>
+                        <br>
                     </div>
-                    <br>
-                </div>
-                <div class="modal-footer">
-                    <button class="btn btn-primary addProductType">添加</button>
-                    <button class="btn btn-primary cancel" data-dismiss="modal">取消</button>
-                </div>
+                    <div class="modal-footer">
+                        <input type="submit" class="btn btn-primary addProductType" value="添加">
+                        <button class="btn btn-primary cancel" data-dismiss="modal">取消</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -98,18 +176,21 @@
                     <button class="close" data-dismiss="modal">&times;</button>
                     <h4 class="modal-title">修改商品类型</h4>
                 </div>
+                <form th:action="@{/productType/modifyStatus}">
+                    <input type="hidden" name="_method" value="put" >
+                </form>
                 <div class="modal-body text-center">
                     <div class="row text-right">
                         <label for="proTypeNum" class="col-sm-4 control-label">编号：</label>
                         <div class="col-sm-4">
-                            <input type="text" class="form-control" id="proTypeNum" readonly>
+                            <input type="text" class="form-control" id="proTypeNum" name="id" readonly>
                         </div>
                     </div>
                     <br>
                     <div class="row text-right">
                         <label for="proTypeName" class="col-sm-4 control-label">类型名称</label>
                         <div class="col-sm-4">
-                            <input type="text" class="form-control" id="proTypeName">
+                            <input type="text" class="form-control" id="proTypeName" name="name" >
                         </div>
                     </div>
                 </div>

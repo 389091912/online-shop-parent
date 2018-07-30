@@ -23,7 +23,7 @@
         <property name="prefix" value="/WEB-INF/front/"/>
         <property name="suffix" value=".html"/>
         <property name="templateMode" value="HTML5"/>
-        <property name="cacheable" value="true"/>
+        <property name="cacheable" value="false"/>
     </bean>
 
     <bean id="templateEngine" class="org.thymeleaf.spring4.SpringTemplateEngine">
@@ -40,5 +40,14 @@
     <mvc:resources mapping="/images/**" location="/WEB-INF/static/images/"/>
     <mvc:resources mapping="/fonts/**" location="/WEB-INF/static/fonts/"/>
     <mvc:resources mapping="/iconfont/**" location="/WEB-INF/static/iconfont/"/>
+    <mvc:resources mapping="/upload/**" location="upload/"/>
+
+    <mvc:view-controller path="/cart" view-name="cart"/>
+    <mvc:view-controller path="/center" view-name="center"/>
+    <mvc:view-controller path="/front-index" view-name="main"/>
+    <mvc:view-controller path="/front-main" view-name="main"/>
+    <mvc:view-controller path="/order" view-name="order"/>
+    <mvc:view-controller path="/orderDetail" view-name="orderDetail"/>
+    <mvc:view-controller path="/myOrders" view-name="myOrders"/>
 
 </beans>

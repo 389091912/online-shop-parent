@@ -290,4 +290,19 @@ public class Sysuser {
     public void setRole(Integer role) {
         this.role = role;
     }
+
+    @Override
+    public String toString() {
+        return "Sysuser{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", loginName='" + loginName + '\'' +
+                ", password='" + password + '\'' +
+                ", phone='" + phone + '\'' +
+                ", email='" + email + '\'' +
+                ", isValid=" + isValid +
+                ", createDate=" + createDate +
+                ", role=" + role +
+                '}';
+    }
 }
